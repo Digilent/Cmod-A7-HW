@@ -20,7 +20,7 @@ set script_folder [_tcl::get_script_folder]
 ################################################################
 # Check if script is running in correct Vivado version.
 ################################################################
-set scripts_vivado_version 2024.1
+set scripts_vivado_version 2025.1
 set current_vivado_version [version -short]
 
 if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
@@ -248,8 +248,16 @@ proc create_hier_cell_microblaze_0_local_memory { parentCell nameHier } {
   connect_bd_intf_net -intf_net microblaze_0_ilmb_cntlr [get_bd_intf_pins ilmb_bram_if_cntlr/BRAM_PORT] [get_bd_intf_pins lmb_bram/BRAM_PORTB]
 
   # Create port connections
-  connect_bd_net -net SYS_Rst_1 [get_bd_pins SYS_Rst] [get_bd_pins dlmb_bram_if_cntlr/LMB_Rst] [get_bd_pins dlmb_v10/SYS_Rst] [get_bd_pins ilmb_bram_if_cntlr/LMB_Rst] [get_bd_pins ilmb_v10/SYS_Rst]
-  connect_bd_net -net microblaze_0_Clk [get_bd_pins LMB_Clk] [get_bd_pins dlmb_bram_if_cntlr/LMB_Clk] [get_bd_pins dlmb_v10/LMB_Clk] [get_bd_pins ilmb_bram_if_cntlr/LMB_Clk] [get_bd_pins ilmb_v10/LMB_Clk]
+  connect_bd_net -net SYS_Rst_1  [get_bd_pins SYS_Rst] \
+  [get_bd_pins dlmb_bram_if_cntlr/LMB_Rst] \
+  [get_bd_pins dlmb_v10/SYS_Rst] \
+  [get_bd_pins ilmb_bram_if_cntlr/LMB_Rst] \
+  [get_bd_pins ilmb_v10/SYS_Rst]
+  connect_bd_net -net microblaze_0_Clk  [get_bd_pins LMB_Clk] \
+  [get_bd_pins dlmb_bram_if_cntlr/LMB_Clk] \
+  [get_bd_pins dlmb_v10/LMB_Clk] \
+  [get_bd_pins ilmb_bram_if_cntlr/LMB_Clk] \
+  [get_bd_pins ilmb_v10/LMB_Clk]
 
   # Restore current instance
   current_bd_instance $oldCurInst
@@ -465,18 +473,66 @@ proc create_root_design { parentCell } {
   connect_bd_intf_net -intf_net microblaze_0_ilmb_1 [get_bd_intf_pins microblaze_0/ILMB] [get_bd_intf_pins microblaze_0_local_memory/ILMB]
 
   # Create port connections
-  connect_bd_net -net axi_gpio_0_ip2intc_irpt [get_bd_pins axi_gpio_0/ip2intc_irpt] [get_bd_pins xlconcat_0/In1]
-  connect_bd_net -net axi_timer_0_interrupt [get_bd_pins axi_timer_0/interrupt] [get_bd_pins xlconcat_0/In0]
-  connect_bd_net -net clk_wiz_0_locked [get_bd_pins clk_wiz_0/locked] [get_bd_pins rst_clk_wiz_0_100M/dcm_locked]
-  connect_bd_net -net mdm_1_debug_sys_rst [get_bd_pins mdm_1/Debug_SYS_Rst] [get_bd_pins rst_clk_wiz_0_100M/mb_debug_sys_rst]
-  connect_bd_net -net microblaze_0_Clk [get_bd_pins clk_wiz_0/clk_out1] [get_bd_pins axi_emc_0/rdclk] [get_bd_pins axi_emc_0/s_axi_aclk] [get_bd_pins axi_gpio_0/s_axi_aclk] [get_bd_pins axi_gpio_1/s_axi_aclk] [get_bd_pins axi_intc_0/s_axi_aclk] [get_bd_pins axi_mem_intercon/ACLK] [get_bd_pins axi_mem_intercon/M00_ACLK] [get_bd_pins axi_mem_intercon/S00_ACLK] [get_bd_pins axi_mem_intercon/S01_ACLK] [get_bd_pins axi_timer_0/s_axi_aclk] [get_bd_pins axi_uartlite_0/s_axi_aclk] [get_bd_pins microblaze_0/Clk] [get_bd_pins microblaze_0_axi_periph/ACLK] [get_bd_pins microblaze_0_axi_periph/M00_ACLK] [get_bd_pins microblaze_0_axi_periph/M01_ACLK] [get_bd_pins microblaze_0_axi_periph/M02_ACLK] [get_bd_pins microblaze_0_axi_periph/M03_ACLK] [get_bd_pins microblaze_0_axi_periph/M04_ACLK] [get_bd_pins microblaze_0_axi_periph/S00_ACLK] [get_bd_pins microblaze_0_local_memory/LMB_Clk] [get_bd_pins rst_clk_wiz_0_100M/slowest_sync_clk]
-  connect_bd_net -net reset_1 [get_bd_ports reset] [get_bd_pins clk_wiz_0/reset] [get_bd_pins rst_clk_wiz_0_100M/ext_reset_in]
-  connect_bd_net -net rst_clk_wiz_0_100M_bus_struct_reset [get_bd_pins rst_clk_wiz_0_100M/bus_struct_reset] [get_bd_pins microblaze_0_local_memory/SYS_Rst]
-  connect_bd_net -net rst_clk_wiz_0_100M_interconnect_aresetn [get_bd_pins rst_clk_wiz_0_100M/interconnect_aresetn] [get_bd_pins axi_mem_intercon/ARESETN] [get_bd_pins microblaze_0_axi_periph/ARESETN]
-  connect_bd_net -net rst_clk_wiz_0_100M_mb_reset [get_bd_pins rst_clk_wiz_0_100M/mb_reset] [get_bd_pins microblaze_0/Reset]
-  connect_bd_net -net rst_clk_wiz_0_100M_peripheral_aresetn [get_bd_pins rst_clk_wiz_0_100M/peripheral_aresetn] [get_bd_pins axi_emc_0/s_axi_aresetn] [get_bd_pins axi_gpio_0/s_axi_aresetn] [get_bd_pins axi_gpio_1/s_axi_aresetn] [get_bd_pins axi_intc_0/s_axi_aresetn] [get_bd_pins axi_mem_intercon/M00_ARESETN] [get_bd_pins axi_mem_intercon/S00_ARESETN] [get_bd_pins axi_mem_intercon/S01_ARESETN] [get_bd_pins axi_timer_0/s_axi_aresetn] [get_bd_pins axi_uartlite_0/s_axi_aresetn] [get_bd_pins microblaze_0_axi_periph/M00_ARESETN] [get_bd_pins microblaze_0_axi_periph/M01_ARESETN] [get_bd_pins microblaze_0_axi_periph/M02_ARESETN] [get_bd_pins microblaze_0_axi_periph/M03_ARESETN] [get_bd_pins microblaze_0_axi_periph/M04_ARESETN] [get_bd_pins microblaze_0_axi_periph/S00_ARESETN]
-  connect_bd_net -net sys_clock_1 [get_bd_ports sys_clock] [get_bd_pins clk_wiz_0/clk_in1]
-  connect_bd_net -net xlconcat_0_dout [get_bd_pins xlconcat_0/dout] [get_bd_pins axi_intc_0/intr]
+  connect_bd_net -net axi_gpio_0_ip2intc_irpt  [get_bd_pins axi_gpio_0/ip2intc_irpt] \
+  [get_bd_pins xlconcat_0/In1]
+  connect_bd_net -net axi_timer_0_interrupt  [get_bd_pins axi_timer_0/interrupt] \
+  [get_bd_pins xlconcat_0/In0]
+  connect_bd_net -net clk_wiz_0_locked  [get_bd_pins clk_wiz_0/locked] \
+  [get_bd_pins rst_clk_wiz_0_100M/dcm_locked]
+  connect_bd_net -net mdm_1_debug_sys_rst  [get_bd_pins mdm_1/Debug_SYS_Rst] \
+  [get_bd_pins rst_clk_wiz_0_100M/mb_debug_sys_rst]
+  connect_bd_net -net microblaze_0_Clk  [get_bd_pins clk_wiz_0/clk_out1] \
+  [get_bd_pins axi_emc_0/rdclk] \
+  [get_bd_pins axi_emc_0/s_axi_aclk] \
+  [get_bd_pins axi_gpio_0/s_axi_aclk] \
+  [get_bd_pins axi_gpio_1/s_axi_aclk] \
+  [get_bd_pins axi_intc_0/s_axi_aclk] \
+  [get_bd_pins axi_mem_intercon/ACLK] \
+  [get_bd_pins axi_mem_intercon/M00_ACLK] \
+  [get_bd_pins axi_mem_intercon/S00_ACLK] \
+  [get_bd_pins axi_mem_intercon/S01_ACLK] \
+  [get_bd_pins axi_timer_0/s_axi_aclk] \
+  [get_bd_pins axi_uartlite_0/s_axi_aclk] \
+  [get_bd_pins microblaze_0/Clk] \
+  [get_bd_pins microblaze_0_axi_periph/ACLK] \
+  [get_bd_pins microblaze_0_axi_periph/M00_ACLK] \
+  [get_bd_pins microblaze_0_axi_periph/M01_ACLK] \
+  [get_bd_pins microblaze_0_axi_periph/M02_ACLK] \
+  [get_bd_pins microblaze_0_axi_periph/M03_ACLK] \
+  [get_bd_pins microblaze_0_axi_periph/M04_ACLK] \
+  [get_bd_pins microblaze_0_axi_periph/S00_ACLK] \
+  [get_bd_pins microblaze_0_local_memory/LMB_Clk] \
+  [get_bd_pins rst_clk_wiz_0_100M/slowest_sync_clk]
+  connect_bd_net -net reset_1  [get_bd_ports reset] \
+  [get_bd_pins clk_wiz_0/reset] \
+  [get_bd_pins rst_clk_wiz_0_100M/ext_reset_in]
+  connect_bd_net -net rst_clk_wiz_0_100M_bus_struct_reset  [get_bd_pins rst_clk_wiz_0_100M/bus_struct_reset] \
+  [get_bd_pins microblaze_0_local_memory/SYS_Rst]
+  connect_bd_net -net rst_clk_wiz_0_100M_interconnect_aresetn  [get_bd_pins rst_clk_wiz_0_100M/interconnect_aresetn] \
+  [get_bd_pins axi_mem_intercon/ARESETN] \
+  [get_bd_pins microblaze_0_axi_periph/ARESETN]
+  connect_bd_net -net rst_clk_wiz_0_100M_mb_reset  [get_bd_pins rst_clk_wiz_0_100M/mb_reset] \
+  [get_bd_pins microblaze_0/Reset]
+  connect_bd_net -net rst_clk_wiz_0_100M_peripheral_aresetn  [get_bd_pins rst_clk_wiz_0_100M/peripheral_aresetn] \
+  [get_bd_pins axi_emc_0/s_axi_aresetn] \
+  [get_bd_pins axi_gpio_0/s_axi_aresetn] \
+  [get_bd_pins axi_gpio_1/s_axi_aresetn] \
+  [get_bd_pins axi_intc_0/s_axi_aresetn] \
+  [get_bd_pins axi_mem_intercon/M00_ARESETN] \
+  [get_bd_pins axi_mem_intercon/S00_ARESETN] \
+  [get_bd_pins axi_mem_intercon/S01_ARESETN] \
+  [get_bd_pins axi_timer_0/s_axi_aresetn] \
+  [get_bd_pins axi_uartlite_0/s_axi_aresetn] \
+  [get_bd_pins microblaze_0_axi_periph/M00_ARESETN] \
+  [get_bd_pins microblaze_0_axi_periph/M01_ARESETN] \
+  [get_bd_pins microblaze_0_axi_periph/M02_ARESETN] \
+  [get_bd_pins microblaze_0_axi_periph/M03_ARESETN] \
+  [get_bd_pins microblaze_0_axi_periph/M04_ARESETN] \
+  [get_bd_pins microblaze_0_axi_periph/S00_ARESETN]
+  connect_bd_net -net sys_clock_1  [get_bd_ports sys_clock] \
+  [get_bd_pins clk_wiz_0/clk_in1]
+  connect_bd_net -net xlconcat_0_dout  [get_bd_pins xlconcat_0/dout] \
+  [get_bd_pins axi_intc_0/intr]
 
   # Create address segments
   assign_bd_address -offset 0x60000000 -range 0x00080000 -target_address_space [get_bd_addr_spaces microblaze_0/Data] [get_bd_addr_segs axi_emc_0/S_AXI_MEM/MEM0] -force
